@@ -13,8 +13,10 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from 'react';
+import {Link, useNavigate} from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = ({ setLoading }) => {
+    const navigate = useNavigate();
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     const toggleDrawer = (open) => (event) => {
@@ -23,7 +25,13 @@ const Navbar = () => {
         }
         setDrawerOpen(open);
     };
-
+    const handleNavigation = () => {
+        setLoading(true)
+        setTimeout(() => {
+            navigate("/build")
+            setLoading(false)
+        }, 1000)
+    }
     const drawer = (
         <Box
             sx={{ width: 250 }}
@@ -42,7 +50,7 @@ const Navbar = () => {
     );
 
     return (
-        <AppBar position="sticky" color="primary">
+        <AppBar position="sticky" color="primary" sx={{bgcolor: "#000506"}}>
             <Toolbar color="primary" >
                 <IconButton
                     edge="start"
@@ -57,11 +65,12 @@ const Navbar = () => {
                     RigWizard
                 </Typography>
                 <Box sx={{ display: { xs: 'none', sm: 'block' }, padding: "10px" }}>
-                    {['Home', 'How It Works', 'About Us', 'Contact', 'Get Started'].map((text) => (
-                        <Button key={text} color="primary" size="large" sx={{margin: "0 0 0 0.5 rem"}}>
-                            {text}
-                        </Button>
-                    ))}
+                    <Link to="/"><Button color="primary" size="large" sx={{margin: "0 0 0 1 rem"}}>Home</Button></Link>
+                    <Button color="primary" size="large" sx={{margin: "0 0 0 1 rem"}}>How It Works</Button>
+                    <Button color="primary" size="large" sx={{margin: "0 0 0 1 rem"}}>About Us</Button>
+                    <Button color="primary" size="large" sx={{margin: "0 0 0 1 rem"}}>Contact</Button>
+                    <Button color="primary" size="large" sx={{margin: "0 0 0 1 rem"}} onClick = {handleNavigation}>Build</Button>
+
                 </Box>
             </Toolbar>
             <Drawer
