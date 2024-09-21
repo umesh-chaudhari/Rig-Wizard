@@ -1,12 +1,14 @@
 import {useState} from 'react'
 import { createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 
-import Starter from "./Starter.jsx";
+import Home from "./Home.jsx";
 import Navbar from "./Navbar.jsx";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Build from "./Build.jsx";
+import Loader from "./Loader.jsx";
 
 function App() {
+    const [loading, setLoading] = useState(false);
     const darkTheme = createTheme({
         palette: {
             mode: "dark"
@@ -18,10 +20,11 @@ function App() {
             <BrowserRouter>
                 <ThemeProvider theme={darkTheme}>
                     <CssBaseline/>
-                    <Navbar/>
+                    <Navbar setLoading={setLoading}/>
+                    {loading && <Loader />}
                     <Routes>
-                        <Route path="/" element={<Starter/>}/>
-                        <Route path="/build" element={<Build/>}/>
+                        <Route path="/" element={<Home setLoading={setLoading} />} />
+                        <Route path="/build" element={<Build />}/>
                     </Routes>
                 </ThemeProvider>
             </BrowserRouter>
