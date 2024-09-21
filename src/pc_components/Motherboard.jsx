@@ -1,9 +1,10 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {MotherboardContext} from "../context/StateContext.jsx";
+import {MotherboardContext, PcContext} from "../context/StateContext.jsx";
 import {Autocomplete, Box, Card, CardContent, Container, TextField, Typography} from "@mui/material";
 import {FixedSizeList} from "react-window";
 import motherboardData from "/public/data/motherboard.json"
 import {motion } from "framer-motion"
+
 
 
 const LISTBOX_PADDING = 8; // px
@@ -57,13 +58,19 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
 });
 
 const Motherboard = () => {
-    const {motherboard, setMotherboard} = useContext(MotherboardContext)
+    const {motherboard} = useContext(PcContext)
+    const [motherboardValue, setMotherboardValue] = motherboard
     const [motherboards, setMotherboards] = useState([]);
 
 
     useEffect(() => {
         setMotherboards(motherboardData);
     }, []);
+
+    useEffect(() => {
+        setMotherboardValue(motherboardValue)
+    }, [motherboardValue]);
+
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
             <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -76,9 +83,9 @@ const Motherboard = () => {
                             <img src="/images/motherboard.png" alt="Component" style={{width: 100, height: 100}}/>
                         </Box>
                         <Autocomplete
-                            value={motherboard}
+                            value={motherboardValue || null}
                             onChange={(error, value) => {
-                                setMotherboard(value)
+                                setMotherboardValue(value)
                                 console.log("Autocomplete Value....",value)
                             }}
                             options={motherboards}

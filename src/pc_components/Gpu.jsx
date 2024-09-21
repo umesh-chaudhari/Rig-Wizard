@@ -2,7 +2,7 @@ import React, {useState, useEffect, createContext, useContext} from 'react';
 import {Container, Card, CardContent, Typography, Box, TextField, Autocomplete} from '@mui/material';
 import {FixedSizeList} from 'react-window';
 import gpuData from '/public/data/video-card.json'; // Ensure this path is correct
-import {GPUContext} from "../context/StateContext.jsx"
+import {GPUContext, PcContext} from "../context/StateContext.jsx"
 import {motion } from "framer-motion"
 
 const LISTBOX_PADDING = 8; // px
@@ -56,12 +56,17 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
     );
 });
 const Gpu = () => {
-    const {gpu, setGpu} = useContext(GPUContext)
+    const {gpu} = useContext(PcContext)
+    const [gpuValue, setGpuValue] = gpu
     const [gpus, setGpus] = useState([]);
     useEffect(() => {
         // Fetch the CPU data and set it to the state (mock fetch here)
         setGpus(gpuData);
     }, []);
+
+    useEffect(() => {
+        setGpuValue(gpuValue)
+    }, [gpuValue]);
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
         <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -74,9 +79,9 @@ const Gpu = () => {
                         <img src="/images/video-card.png" alt="Component" style={{width: 100, height: 100}}/>
                     </Box>
                     <Autocomplete
-                        value={gpu}
+                        value={gpuValue || null}
                         onChange={(error, value) => {
-                            setGpu(value)
+                            setGpuValue(value)
                             console.log("Autocomplete Value...", value)
                         }}
                         options={gpus}
@@ -84,11 +89,6 @@ const Gpu = () => {
                         renderInput={(params) => <TextField {...params} label="GPU" variant="outlined" fullWidth
                                                               mb={2} mt={2}/>}
                         ListboxComponent={ListboxComponent}
-                        renderOption={(props, option, state, ownerState) => (
-                            <Box component="li" {...props} sx={{my: 0, p: 5}}>
-                                {option.name} {option.chipset ? option.chipset : 'Unknown Chipset'}
-                            </Box>
-                        )}
                     />
                 </CardContent>
             </Card>

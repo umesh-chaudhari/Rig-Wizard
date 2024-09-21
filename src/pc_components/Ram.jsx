@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {RAMContext} from "../context/StateContext.jsx";
+import {PcContext, RAMContext} from "../context/StateContext.jsx";
 import {Autocomplete, Box, Card, CardContent, Container, TextField, Typography} from "@mui/material";
 import {FixedSizeList} from "react-window";
 import ramData from "/public/data/memory.json"
@@ -58,13 +58,18 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
 
 
 const Ram = () => {
-    const {ram, setRam} = useContext(RAMContext)
+    const {ram} = useContext(PcContext)
+    const [ramValue, setRamValue] = ram
     const [rams, setRams] = useState([]);
 
     useEffect(() => {
         // Fetch the CPU data and set it to the state (mock fetch here)
         setRams(ramData);
     }, []);
+
+    useEffect(() => {
+        setRamValue(ramValue)
+    }, [ramValue]);
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
             <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -77,9 +82,9 @@ const Ram = () => {
                             <img src="/images/memory-slot.png" alt="Component" style={{width: 100, height: 100}}/>
                         </Box>
                         <Autocomplete
-                            value={ram}
+                            value={ramValue || null}
                             onChange={(error, value) => {
-                                setRam(value)
+                                setRamValue(value)
                                 console.log("Autocomplete Value....",value)
                             }}
                             options={rams}

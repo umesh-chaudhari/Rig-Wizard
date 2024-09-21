@@ -1,7 +1,7 @@
 import React, {useState, useEffect, createContext, useContext} from 'react';
 import {Container, Card, CardContent, Typography, Box, TextField, Autocomplete} from '@mui/material';
 import {FixedSizeList} from 'react-window';
-import {CoolerContext} from "../context/StateContext.jsx"
+import {PcContext} from "../context/StateContext.jsx"
 import coolerData from "/public/data/cpu-cooler.json"
 import {motion } from "framer-motion"
 
@@ -58,12 +58,19 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
     );
 });
 const Cooler = () => {
-    const {cooler, setCooler} = useContext(CoolerContext)
+    const { cooler } = useContext(PcContext)
+    const [coolerValue, setCoolerValue] = cooler
     const [coolers, setCoolers] = useState([]);
     useEffect(() => {
         // Fetch the CPU data and set it to the state (mock fetch here)
         setCoolers(coolerData);
+        console.log(cooler)
     }, []);
+
+    useEffect(() => {
+        setCoolerValue(coolerValue)
+    }, [coolerValue]);
+
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
             <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -76,10 +83,10 @@ const Cooler = () => {
                             <img src="/images/cooler-caticon.png" alt="Component" style={{width: 100, height: 100}}/>
                         </Box>
                         <Autocomplete
-                            value={cooler}
+                            value={coolerValue || null}
                             onChange={(error, value) => {
-                                setCooler(value)
-                                console.log("Autocomplete Value...", value)
+                                setCoolerValue(value)
+                                console.log("Autocomplete Value...", coolerValue)
                             }}
                             options={coolers}
                             getOptionLabel={(option) => `${option.name} - ${option.size + " mm"}`}

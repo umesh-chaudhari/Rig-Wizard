@@ -1,7 +1,7 @@
 import React, {useState, useEffect, createContext, useContext} from 'react';
 import {Container, Card, CardContent, Typography, Box, TextField, Autocomplete} from '@mui/material';
 import {FixedSizeList} from 'react-window';
-import {CPUContext} from "../context/StateContext.jsx"
+import {CPUContext, PcContext} from "../context/StateContext.jsx"
 import cpuData from "/public/data/filtered_processors.json";
 import {motion } from "framer-motion"
 
@@ -56,12 +56,18 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
     );
 });
 const Cpu = () => {
-    const {cpu, setCpu} = useContext(CPUContext)
+    const {cpu} = useContext(PcContext)
+    const [cpuValue, setCpuValue] = cpu
     const [cpus, setCpus] = useState([]);
     useEffect(() => {
         // Fetch the CPU data and set it to the state (mock fetch here)
         setCpus(cpuData);
     }, []);
+
+    useEffect(() => {
+        setCpuValue(cpuValue)
+        console.log("inside useeffect...", cpuValue)
+    }, [cpuValue]);
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
         <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -74,17 +80,17 @@ const Cpu = () => {
                         <img src="/images/processor.png" alt="Component" style={{width: 100, height: 100}}/>
                     </Box>
                     <Autocomplete
-                        isOptionEqualToValue={(option, value) => option.name === value.name}
-                        value={cpu || null}
+                        value={ cpuValue || null }
                         onChange={(error, value) => {
-                            setCpu(value)
-                            console.log("Autocomplete Value...", value)
+                            setCpuValue(value)
+                            console.log("context Value...", cpuValue)
                         }}
                         options={cpus}
                         getOptionLabel={(option) => `${option.name} ${option.chipset ? option.chipset : ""}`}
-                        renderInput={(params) => <TextField {...params} label="CPU" variant="outlined" fullWidth
+                        renderInput={(params) => <TextField {...params} label="CPU" variant="outlined" fullWidth required
                                                             mb={2} mt={2}/>}
                         ListboxComponent={ListboxComponent}
+                        isOptionEqualToValue={(option, value) => option.name === value.name}
                         renderOption={(props, option, state, ownerState) => (
                             <Box component="li" {...props} sx={{my: 1, py: 5}} key={option}>
                                 {option.name} {option.chipset ? option.chipset : ''}

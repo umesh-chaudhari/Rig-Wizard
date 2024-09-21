@@ -1,7 +1,7 @@
 import React, {useState, useEffect, createContext, useContext} from 'react';
 import {Container, Card, CardContent, Typography, Box, TextField, Autocomplete} from '@mui/material';
 import {FixedSizeList} from 'react-window';
-import {PowerSupplyContext} from "../context/StateContext.jsx"
+import {PcContext, PowerSupplyContext} from "../context/StateContext.jsx"
 import powerSupplyData from "/public/data/power-supply.json"
 import {motion } from "framer-motion"
 
@@ -58,12 +58,19 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
     );
 });
 const PowerSupply = () => {
-    const {powerSupply, setPowerSupply} = useContext(PowerSupplyContext)
+    const {powerSupply} = useContext(PcContext)
+    const [powerSupplyValue, setPowerSupplyValue] = powerSupply
     const [powerSupplies, setPowerSupplies] = useState([]);
     useEffect(() => {
         // Fetch the CPU data and set it to the state (mock fetch here)
         setPowerSupplies(powerSupplyData);
     }, []);
+
+    useEffect(() => {
+        setPowerSupplyValue(powerSupplyValue)
+    }, [powerSupplyValue]);
+
+
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
         <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -76,9 +83,9 @@ const PowerSupply = () => {
                         <img src="/images/power-supply.png" alt="Component" style={{width: 100, height: 100}}/>
                     </Box>
                     <Autocomplete
-                        value={powerSupply}
+                        value={powerSupplyValue || null}
                         onChange={(error, value) => {
-                            setPowerSupply(value)
+                            setPowerSupplyValue(value)
                             console.log("Autocomplete Value...", value)
                         }}
                         options={powerSupplies}

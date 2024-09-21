@@ -1,7 +1,7 @@
 import React, {useState, useEffect, createContext, useContext} from 'react';
 import {Container, Card, CardContent, Typography, Box, TextField, Autocomplete} from '@mui/material';
 import {FixedSizeList} from 'react-window';
-import {PcCaseContext} from "../context/StateContext.jsx"
+import {PcCaseContext, PcContext} from "../context/StateContext.jsx"
 import pcCaseData from "/public/data/case.json"
 import {motion } from "framer-motion"
 
@@ -57,12 +57,17 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
     );
 });
 const PcCase = () => {
-    const {pcCase, setPcCase} = useContext(PcCaseContext)
+    const {pcCase} = useContext(PcContext)
+    const [pcCaseValue, setPcCaseValue] = pcCase
     const [pcCases, setPcCases] = useState([]);
     useEffect(() => {
         // Fetch the CPU data and set it to the state (mock fetch here)
         setPcCases(pcCaseData);
     }, []);
+
+    useEffect(() => {
+        setPcCaseValue(pcCaseValue)
+    }, [pcCaseValue]);
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
         <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -75,9 +80,9 @@ const PcCase = () => {
                         <img src="/images/cabinets-caticon.png" alt="Component" style={{width: 100, height: 100}}/>
                     </Box>
                     <Autocomplete
-                        value={pcCase}
+                        value={pcCaseValue || null}
                         onChange={(error, value) => {
-                            setPcCase(value)
+                            setPcCaseValue(value)
                             console.log("Autocomplete Value...", value)
                         }}
                         options={pcCases}

@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {StorageContext} from "../context/StateContext.jsx";
+import {PcContext, StorageContext} from "../context/StateContext.jsx";
 import {Autocomplete, Box, Card, CardContent, Container, TextField, Typography} from "@mui/material";
 import {FixedSizeList} from "react-window";
 import storageData from "/public/data/internal-hard-drive.json"
@@ -56,13 +56,18 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
     );
 });
 const InternalStorage = () => {
-    const {storage, setStorage} = useContext(StorageContext)
+    const {storage} = useContext(PcContext)
+    const [storageValue, setStorageValue] = storage
     const [storages, setStorages] = useState([]);
 
     useEffect(() => {
         // Fetch the CPU data and set it to the state (mock fetch here)
         setStorages(storageData);
     }, []);
+
+    useEffect(() => {
+        setStorageValue(storageValue)
+    }, [storageValue]);
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
             <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -75,9 +80,9 @@ const InternalStorage = () => {
                             <img src="/images/hdd.png" alt="Component" style={{width: 100, height: 100}}/>
                         </Box>
                         <Autocomplete
-                            value={storage}
+                            value={storageValue || null}
                             onChange={(error, value) => {
-                                setStorage(value)
+                                setStorageValue(value)
                                 console.log("Autocomplete Value....",value)
                             }}
                             options={storages}
