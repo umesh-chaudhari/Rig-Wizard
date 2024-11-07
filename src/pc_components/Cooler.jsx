@@ -1,69 +1,45 @@
-import React, {useState, useEffect, createContext, useContext} from 'react';
-import {Container, Card, CardContent, Typography, Box, TextField, Autocomplete} from '@mui/material';
-import {FixedSizeList} from 'react-window';
-import {CoolerContext} from "../context/StateContext.jsx"
-import coolerData from "/public/data/cpu-cooler.json"
+import React, {useState, useEffect, useContext} from 'react';
+import {Container, Card, CardContent, Typography, Box, TextField, Autocomplete, CircularProgress} from '@mui/material';
 import {motion } from "framer-motion"
+import ListboxComponent from "./ListboxComponent.jsx";
+import {usePcBuilderStore} from "../context/PcStore.jsx";
+import axios from "axios";
 
 
 
-const LISTBOX_PADDING = 8; // px
-
-function renderRow(props) {
-    const {data, index, style} = props;
-    return React.cloneElement(data[index], {
-        style: {
-            ...style,
-            top: style.top + LISTBOX_PADDING,
-        },
-    });
-}
-
-const OuterElementContext = createContext({});
-
-const OuterElementType = React.forwardRef((props, ref) => {
-    const outerProps = useContext(OuterElementContext);
-    return <div ref={ref} {...props} {...outerProps} />;
-});
-
-const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) {
-    const {children, ...other} = props;
-    const itemData = React.Children.toArray(children);
-    const itemCount = itemData.length;
-    const itemSize = 46;
-
-    const getHeight = () => {
-        if (itemCount > 8) {
-            return 8 * itemSize;
-        }
-        return itemData.length * itemSize;
-    };
-
-    return (
-        <div ref={ref}>
-            <OuterElementContext.Provider value={other}>
-                <FixedSizeList
-                    height={getHeight() + 2 * LISTBOX_PADDING}
-                    width="100%"
-                    itemSize={itemSize}
-                    itemCount={itemCount}
-                    outerElementType={OuterElementType}
-                    innerElementType="ul"
-                    itemData={itemData}
-                >
-                    {renderRow}
-                </FixedSizeList>
-            </OuterElementContext.Provider>
-        </div>
-    );
-});
+const URI = import.meta.env.VITE_API_URI + "/build/cooler";
 const Cooler = () => {
-    const {cooler, setCooler} = useContext(CoolerContext)
+    // const {cooler, setCooler} = useContext(CoolerContext)
+    const {cooler, setCooler} = usePcBuilderStore()
     const [coolers, setCoolers] = useState([]);
-    useEffect(() => {
-        // Fetch the CPU data and set it to the state (mock fetch here)
-        setCoolers(coolerData);
-    }, []);
+    const [open, setOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
+
+    const fetchData = async () => {
+        try{
+            const response = await axios.get(URI)
+            if (response.status === 200) {
+                setCoolers(response.data)
+                setLoading(false)
+            }
+        }
+        catch (error) {
+            console.log(error);
+            setLoading(false)
+        }
+    }
+    const handleOpen = () => {
+        setOpen(true);
+        (async () => {
+            setLoading(true);
+            await fetchData();
+            setLoading(false);
+        })();
+    };
+    const handleClose = () => {
+        setOpen(false);
+        setCoolers([])
+    }
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
             <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -76,6 +52,10 @@ const Cooler = () => {
                             <img src="/images/cooler-caticon.png" alt="Component" style={{width: 100, height: 100}}/>
                         </Box>
                         <Autocomplete
+                            open={open}
+                            loading={loading}
+                            onOpen={handleOpen}
+                            onClose={handleClose}
                             value={cooler}
                             onChange={(error, value) => {
                                 setCooler(value)
@@ -83,8 +63,25 @@ const Cooler = () => {
                             }}
                             options={coolers}
                             getOptionLabel={(option) => `${option.name} - ${option.size + " mm"}`}
-                            renderInput={(params) => <TextField {...params} label="Cooler" variant="outlined" fullWidth
-                                                                mb={2} mt={2}/>}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Cooler"
+                                    variant="outlined"
+                                    fullWidth
+                                    mb={2}
+                                    mt={2}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        endAdornment: (
+                                            <>
+                                                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                {params.InputProps.endAdornment}
+                                            </>
+                                        ),
+                                    }}
+                                />
+                            )}
                             ListboxComponent={ListboxComponent}
                         />
                     </CardContent>
