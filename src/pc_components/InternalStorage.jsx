@@ -1,68 +1,46 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {StorageContext} from "../context/StateContext.jsx";
-import {Autocomplete, Box, Card, CardContent, Container, TextField, Typography} from "@mui/material";
-import {FixedSizeList} from "react-window";
-import storageData from "/public/data/internal-hard-drive.json"
+import {Autocomplete, Box, Card, CardContent, CircularProgress, Container, TextField, Typography} from "@mui/material";
 import {motion } from "framer-motion"
+import {usePcBuilderStore} from "../context/PcStore.jsx";
+import ListboxComponent from "./ListboxComponent.jsx";
+import axios from "axios";
 
 
-const LISTBOX_PADDING = 8; // px
-function renderRow(props) {
-    const {data, index, style} = props;
-    return React.cloneElement(data[index], {
-        style: {
-            ...style,
-            top: style.top + LISTBOX_PADDING,
-        },
-    });
-}
 
-const OuterElementContext = createContext({});
 
-const OuterElementType = React.forwardRef((props, ref) => {
-    const outerProps = useContext(OuterElementContext);
-    return <div ref={ref} {...props} {...outerProps} />;
-});
+const URI = import.meta.env.VITE_API_URI + "/build/storage";
 
-const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) {
-    const {children, ...other} = props;
-    const itemData = React.Children.toArray(children);
-    const itemCount = itemData.length;
-    const itemSize = 46;
-
-    const getHeight = () => {
-        if (itemCount > 8) {
-            return 8 * itemSize;
-        }
-        return itemData.length * itemSize;
-    };
-
-    return (
-        <div ref={ref}>
-            <OuterElementContext.Provider value={other}>
-                <FixedSizeList
-                    height={getHeight() + 2 * LISTBOX_PADDING}
-                    width="100%"
-                    itemSize={itemSize}
-                    itemCount={itemCount}
-                    outerElementType={OuterElementType}
-                    innerElementType="ul"
-                    itemData={itemData}
-                >
-                    {renderRow}
-                </FixedSizeList>
-            </OuterElementContext.Provider>
-        </div>
-    );
-});
 const InternalStorage = () => {
-    const {storage, setStorage} = useContext(StorageContext)
+    // const {storage, setStorage} = useContext(StorageContext)
+    const {storage, setStorage} = usePcBuilderStore()
     const [storages, setStorages] = useState([]);
+    const [open, setOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        // Fetch the CPU data and set it to the state (mock fetch here)
-        setStorages(storageData);
-    }, []);
+    const fetchData = async () => {
+        try{
+            const response = await axios.get(URI)
+            if (response.status === 200) {
+                setStorages(response.data)
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleOpen = () => {
+        setOpen(true);
+        (async () => {
+            setLoading(true);
+            await fetchData();
+            setLoading(false);
+        })();
+    };
+    const handleClose = () => {
+        setOpen(false);
+        setStorages([])
+    }
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
             <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -75,6 +53,10 @@ const InternalStorage = () => {
                             <img src="/images/hdd.png" alt="Component" style={{width: 100, height: 100}}/>
                         </Box>
                         <Autocomplete
+                            open={open}
+                            loading={loading}
+                            onOpen={handleOpen}
+                            onClose={handleClose}
                             value={storage}
                             onChange={(error, value) => {
                                 setStorage(value)
@@ -82,7 +64,25 @@ const InternalStorage = () => {
                             }}
                             options={storages}
                             getOptionLabel={(option) => `${option.name} - ${option.capacity < 1000 ? option.capacity + " GB" : option.capacity / 1000 + " TB"}`}
-                            renderInput={(params) => <TextField {...params} label="Internal Storage" variant="outlined" fullWidth/>}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Storage"
+                                    variant="outlined"
+                                    fullWidth
+                                    mb={2}
+                                    mt={2}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        endAdornment: (
+                                            <>
+                                                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                {params.InputProps.endAdornment}
+                                            </>
+                                        ),
+                                    }}
+                                />
+                            )}
                             ListboxComponent={ListboxComponent}
                         />
                     </CardContent>

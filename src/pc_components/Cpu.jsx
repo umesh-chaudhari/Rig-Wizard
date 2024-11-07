@@ -1,67 +1,50 @@
 import React, {useState, useEffect, createContext, useContext} from 'react';
-import {Container, Card, CardContent, Typography, Box, TextField, Autocomplete} from '@mui/material';
-import {FixedSizeList} from 'react-window';
-import {CPUContext} from "../context/StateContext.jsx"
-import cpuData from "/public/data/filtered_processors.json";
-import {motion } from "framer-motion"
+import {
+    Container,
+    Card,
+    CardContent,
+    Typography,
+    Box,
+    TextField,
+    Autocomplete,
+    Button,
+    CircularProgress
+} from '@mui/material';
+import { motion } from "framer-motion"
+import {usePcBuilderStore} from "../context/PcStore.jsx";
+import axios from "axios";
+import ListboxComponent from "./ListboxComponent.jsx";
 
-const LISTBOX_PADDING = 8; // px
-
-function renderRow(props) {
-    const {data, index, style} = props;
-    return React.cloneElement(data[index], {
-        style: {
-            ...style,
-            top: style.top + LISTBOX_PADDING,
-        },
-    });
-}
-
-const OuterElementContext = createContext({});
-
-const OuterElementType = React.forwardRef((props, ref) => {
-    const outerProps = useContext(OuterElementContext);
-    return <div ref={ref} {...props} {...outerProps} />;
-});
-
-const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) {
-    const {children, ...other} = props;
-    const itemData = React.Children.toArray(children);
-    const itemCount = itemData.length;
-    const itemSize = 46;
-
-    const getHeight = () => {
-        if (itemCount > 8) {
-            return 8 * itemSize;
-        }
-        return itemData.length * itemSize;
-    };
-
-    return (
-        <div ref={ref}>
-            <OuterElementContext.Provider value={other}>
-                <FixedSizeList
-                    height={getHeight() + 2 * LISTBOX_PADDING}
-                    width="100%"
-                    itemSize={itemSize}
-                    itemCount={itemCount}
-                    outerElementType={OuterElementType}
-                    innerElementType="ul"
-                    itemData={itemData}
-                >
-                    {renderRow}
-                </FixedSizeList>
-            </OuterElementContext.Provider>
-        </div>
-    );
-});
+const URI = import.meta.env.VITE_API_URI + "/build/cpu";
 const Cpu = () => {
-    const {cpu, setCpu} = useContext(CPUContext)
+    const {cpu, setCpu} = usePcBuilderStore()
     const [cpus, setCpus] = useState([]);
-    useEffect(() => {
-        // Fetch the CPU data and set it to the state (mock fetch here)
-        setCpus(cpuData);
-    }, []);
+    const [open, setOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
+
+    const fetchData = async () => {
+        try{
+            const response = await axios.get(URI)
+            if (response.status === 200) {
+                setCpus(response.data)
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    const handleOpen = () => {
+        setOpen(true);
+        (async () => {
+            setLoading(true);
+            await fetchData();
+            setLoading(false);
+        })();
+    };
+    const handleClose = () => {
+        setOpen(false);
+        setCpus([])
+    }
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
         <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -74,24 +57,41 @@ const Cpu = () => {
                         <img src="/images/processor.png" alt="Component" style={{width: 100, height: 100}}/>
                     </Box>
                     <Autocomplete
+                        open={open}
                         isOptionEqualToValue={(option, value) => option.name === value.name}
-                        value={cpu || null}
+                        value={cpu}
+                        loading={loading}
+                        onOpen={handleOpen}
+                        onClose={handleClose}
                         onChange={(error, value) => {
                             setCpu(value)
                             console.log("Autocomplete Value...", value)
+                            console.log("zustand value", cpu)
                         }}
                         options={cpus}
                         getOptionLabel={(option) => `${option.name} ${option.chipset ? option.chipset : ""}`}
-                        renderInput={(params) => <TextField {...params} label="CPU" variant="outlined" fullWidth
-                                                            mb={2} mt={2}/>}
-                        ListboxComponent={ListboxComponent}
-                        renderOption={(props, option, state, ownerState) => (
-                            <Box component="li" {...props} sx={{my: 1, py: 5}} key={option}>
-                                {option.name} {option.chipset ? option.chipset : ''}
-                            </Box>
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="CPU"
+                                variant="outlined"
+                                fullWidth
+                                mb={2}
+                                mt={2}
+                                InputProps={{
+                                    ...params.InputProps,
+                                    // Show CircularProgress when loading is true
+                                    endAdornment: (
+                                        <>
+                                            {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                            {params.InputProps.endAdornment}
+                                        </>
+                                    ),
+                                }}
+                            />
                         )}
+                        ListboxComponent={ListboxComponent}
                     />
-                    {/*<Typography variant="h5" mt={3}> {Object.values(cpu)[2]}</Typography>*/}
                 </CardContent>
             </Card>
         </Container>
