@@ -1,5 +1,4 @@
-import React from "react";
-import { Container, Typography, Box, Button, Paper } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 // import GetStartedImage from 'public/images/pcbuild.webp'; // Add your image path
 

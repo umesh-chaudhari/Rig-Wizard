@@ -1,18 +1,18 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
 import {
-  Container,
+  Autocomplete,
+  Box,
   Card,
   CardContent,
-  Typography,
-  Box,
-  TextField,
-  Autocomplete,
   CircularProgress,
+  Container,
+  TextField,
+  Typography,
 } from "@mui/material";
+import axios from "axios";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { usePcBuilderStore } from "../context/PcStore.jsx";
 import ListboxComponent from "./ListboxComponent.jsx";
-import axios from "axios";
 
 const URI = import.meta.env.VITE_API_URI + "/build/case";
 

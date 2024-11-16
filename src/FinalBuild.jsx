@@ -1,24 +1,24 @@
-import { useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
 import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  CardActionArea,
   Box,
-  Modal,
-  IconButton,
-  ListItem,
-  List,
-  ListItemText,
-  Container,
   Button,
   ButtonGroup,
+  Card,
+  CardActionArea,
+  CardContent,
   CircularProgress,
+  Container,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Modal,
+  Typography,
 } from "@mui/material";
-import { usePcBuilderStore } from "./context/PcStore.jsx"; // Import your context here
-import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
+import { useState } from "react";
+import { usePcBuilderStore } from "./context/PcStore.jsx"; // Import your context here
 
 const formatKey = (key) => {
   return key

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { CircularProgress, Container, Typography } from "@mui/material";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import BuildItem from "./BuildItem.jsx";
-import { Container, Typography, CircularProgress } from "@mui/material";
 
 const BUILD_LIST_URI = import.meta.env.VITE_API_URI + "/build/builds";
 const BuildList = () => {

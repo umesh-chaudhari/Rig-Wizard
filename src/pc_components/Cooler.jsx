@@ -1,18 +1,18 @@
-import React, { useState } from "react";
 import {
-  Container,
+  Autocomplete,
+  Box,
   Card,
   CardContent,
-  Typography,
-  Box,
-  TextField,
-  Autocomplete,
   CircularProgress,
+  Container,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { motion } from "framer-motion";
-import ListboxComponent from "./ListboxComponent.jsx";
-import { usePcBuilderStore } from "../context/PcStore.jsx";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { usePcBuilderStore } from "../context/PcStore.jsx";
+import ListboxComponent from "./ListboxComponent.jsx";
 
 const URI = import.meta.env.VITE_API_URI + "/build/cooler";
 const Cooler = () => {

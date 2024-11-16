@@ -1,23 +1,11 @@
-import React from "react";
 import {
-  Box,
-  Container,
-  Grid,
-  Paper,
-  SvgIcon,
-  Typography,
-} from "@mui/material";
-import { motion } from "framer-motion";
-import {
-  ArrowRightAltOutlined,
   BuildCircleOutlined,
-  DeleteForever,
-  Image,
   ShareOutlined,
   SpeedOutlined,
-  Tab,
   VerifiedOutlined,
 } from "@mui/icons-material";
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 
 const steps = [
   {

@@ -1,5 +1,4 @@
-import React from "react";
-import { CircularProgress, Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 const Loader = () => (
   <Box

@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  Typography,
-  Grid,
-  ButtonGroup,
-  Button,
-} from "@mui/material";
+import { Card, CardContent, Grid, Typography } from "@mui/material";
 
 const BuildItem = ({ build }) => {
   const { cpu, gpu, ram, motherboard, powerSupply, storage, pcCase, cooler } =

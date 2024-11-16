@@ -1,4 +1,3 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   Autocomplete,
   Box,
@@ -9,10 +8,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { usePcBuilderStore } from "../context/PcStore.jsx";
 import ListboxComponent from "./ListboxComponent.jsx";
-import axios from "axios";
 
 const URI = import.meta.env.VITE_API_URI + "/build/storage";
 

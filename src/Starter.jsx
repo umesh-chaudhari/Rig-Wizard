@@ -1,6 +1,6 @@
+import { ArrowRightAlt } from "@mui/icons-material";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { motion } from "framer-motion";
-import { ArrowRightAlt } from "@mui/icons-material";
 
 import HowItWorks from "./HowItWorks.jsx";
 

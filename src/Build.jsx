@@ -1,22 +1,25 @@
-import { useState } from "react";
 import {
+  Box,
+  Button,
   Container,
-  Typography,
-  Stepper,
   Step,
   StepLabel,
-  Button,
-  Box,
+  Stepper,
+  Typography,
 } from "@mui/material";
+import { useState } from "react";
 import Cpu from "./pc_components/Cpu.jsx";
 import Gpu from "./pc_components/Gpu.jsx";
 import InternalStorage from "./pc_components/InternalStorage.jsx";
-import Ram from "./pc_components/Ram.jsx";
 import PcCase from "./pc_components/PcCase.jsx";
+import Ram from "./pc_components/Ram.jsx";
+
 import PowerSupply from "./pc_components/PowerSupply.jsx";
-import Motherboard from "./pc_components/Motherboard.jsx";
-import Cooler from "./pc_components/Cooler.jsx";
+
 import { useNavigate } from "react-router-dom";
+import Cooler from "./pc_components/Cooler.jsx";
+import Motherboard from "./pc_components/Motherboard.jsx";
+
 import { usePcBuilderStore } from "./context/PcStore.jsx";
 
 const steps = [

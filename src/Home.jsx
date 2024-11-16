@@ -1,10 +1,10 @@
-import { Box, Button, Container, Divider, Typography } from "@mui/material";
-import { motion } from "framer-motion";
 import { ArrowRightAlt } from "@mui/icons-material";
-import HowItWorks from "./HowItWorks.jsx";
-import GetStartedToday from "./GetStartedToday.jsx";
+import { Box, Button, Divider, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Footer from "./Footer.jsx";
+import GetStartedToday from "./GetStartedToday.jsx";
+import HowItWorks from "./HowItWorks.jsx";
 
 const Home = ({ setLoading }) => {
   const navigate = useNavigate();
