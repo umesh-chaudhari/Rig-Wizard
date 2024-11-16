@@ -1,5 +1,4 @@
-import React, {useEffect} from 'react';
-import {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Container,
     Typography,
@@ -9,7 +8,6 @@ import {
     Button,
     Box,
 } from '@mui/material';
-import {GlobalStateProvider} from "./context/StateContext.jsx";
 import Cpu from "./pc_components/Cpu.jsx";
 import Gpu from "./pc_components/Gpu.jsx";
 import InternalStorage from "./pc_components/InternalStorage.jsx";
@@ -18,16 +16,19 @@ import PcCase from "./pc_components/PcCase.jsx";
 import PowerSupply from "./pc_components/PowerSupply.jsx";
 import Motherboard from "./pc_components/Motherboard.jsx";
 import Cooler from "./pc_components/Cooler.jsx";
+import {useNavigate} from "react-router-dom";
+import {usePcBuilderStore} from "./context/PcStore.jsx";
+import axios from "axios";
 
 
+const URL = import.meta.env.VITE_API_URL + "/build/new-build";
 const steps = ['CPU','Motherboard' ,'Cooler', 'GPU', 'Storage', 'RAM', 'Cabinet', 'Power Supply']
+let newKey = 0
 const ContentInStep = ({stepIndex}) => {
-
-
     switch (stepIndex) {
         case 0:
             return (
-                <Cpu/>
+                <Cpu key={newKey}/>
             );
         case 1:
             return (
@@ -64,9 +65,12 @@ const ContentInStep = ({stepIndex}) => {
 }
 
 
-const Build = () => {
 
+const Build = () => {
+    const {cpu, gpu, ram, motherboard, powerSupply, storage, pcCase, cooler} = usePcBuilderStore()
+    const { resetParts } = usePcBuilderStore()
     const [activeStep, setActiveStep] = useState(0);
+    const [local, setLocal] = useState()
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
@@ -74,13 +78,42 @@ const Build = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
     const handleReset = () => {
+        resetParts()
         setActiveStep(0);
-    };
+        setLocal(null)
+        newKey = Math.floor(Math.random() * 100);
 
+    };
+    const handleFinish = async () => {
+        console.log(cpu, gpu, ram, motherboard, powerSupply, storage, pcCase, cooler);
+        navigate("/final-build");
+        try{
+        const response = await axios.post(URL, {
+            cpu: cpu,
+            gpu: gpu,
+            ram: ram,
+            motherboard: motherboard,
+            powerSupply: powerSupply,
+            storage: storage,
+            pcCase: pcCase,
+            cooler: cooler,
+        })
+            if (response.status === 200) {
+
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    const navigate = useNavigate()
+    useEffect(() => {
+        console.log(URL)
+    }, []);
 
 
     return (
-        <GlobalStateProvider>
+
             <Container>
                 <Box my={2}>
                     <Typography variant="h3" align="center" gutterBottom>
@@ -114,14 +147,11 @@ const Build = () => {
                                 <Button disabled={activeStep === 0} onClick={handleBack} variant="outlined">
                                     Back
                                 </Button>
-                                {activeStep === steps.length - 1 && <Button color="error" onClick={() => {
-                                    setActiveStep(0)
-                                }}>Reset</Button>}
+                                {activeStep === steps.length - 1 && <Button color="error" onClick={() => handleReset()}>Reset</Button>}
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    onClick={handleNext}
-                                    disabled={activeStep === steps.length - 1}
+                                    onClick={activeStep === steps.length - 1 ? handleFinish : handleNext}
                                 >
                                     {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                                 </Button>
@@ -130,7 +160,6 @@ const Build = () => {
                     )}
                 </Box>
             </Container>
-        </GlobalStateProvider>
     );
 };
 

@@ -1,67 +1,45 @@
 import React, {useState, useEffect, createContext, useContext} from 'react';
-import {Container, Card, CardContent, Typography, Box, TextField, Autocomplete} from '@mui/material';
-import {FixedSizeList} from 'react-window';
-import gpuData from '/public/data/video-card.json'; // Ensure this path is correct
-import {GPUContext} from "../context/StateContext.jsx"
+import {Container, Card, CardContent, Typography, Box, TextField, Autocomplete, CircularProgress} from '@mui/material';
 import {motion } from "framer-motion"
+import {usePcBuilderStore} from "../context/PcStore.jsx";
+import ListboxComponent from "./ListboxComponent.jsx";
+import axios from "axios";
 
-const LISTBOX_PADDING = 8; // px
 
-function renderRow(props) {
-    const {data, index, style} = props;
-    return React.cloneElement(data[index], {
-        style: {
-            ...style,
-            top: style.top + LISTBOX_PADDING,
-        },
-    });
-}
 
-const OuterElementContext = createContext({});
-
-const OuterElementType = React.forwardRef((props, ref) => {
-    const outerProps = useContext(OuterElementContext);
-    return <div ref={ref} {...props} {...outerProps} />;
-});
-
-const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) {
-    const {children, ...other} = props;
-    const itemData = React.Children.toArray(children);
-    const itemCount = itemData.length;
-    const itemSize = 46;
-
-    const getHeight = () => {
-        if (itemCount > 8) {
-            return 8 * itemSize;
-        }
-        return itemData.length * itemSize;
-    };
-
-    return (
-        <div ref={ref}>
-            <OuterElementContext.Provider value={other}>
-                <FixedSizeList
-                    height={getHeight() + 2 * LISTBOX_PADDING}
-                    width="100%"
-                    itemSize={itemSize}
-                    itemCount={itemCount}
-                    outerElementType={OuterElementType}
-                    innerElementType="ul"
-                    itemData={itemData}
-                >
-                    {renderRow}
-                </FixedSizeList>
-            </OuterElementContext.Provider>
-        </div>
-    );
-});
+const URI = import.meta.env.VITE_API_URI + "/build/gpu";
 const Gpu = () => {
-    const {gpu, setGpu} = useContext(GPUContext)
+    // const {gpu, setGpu} = useContext(GPUContext)
+    const {gpu, setGpu} = usePcBuilderStore()
     const [gpus, setGpus] = useState([]);
-    useEffect(() => {
-        // Fetch the CPU data and set it to the state (mock fetch here)
-        setGpus(gpuData);
-    }, []);
+    const [open, setOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
+
+    const fetchData = async () => {
+        try{
+            const response = await axios.get(URI)
+            if (response.status === 200) {
+                setGpus(response.data)
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleOpen = () => {
+        setOpen(true);
+        (async () => {
+            setLoading(true);
+            await fetchData();
+            setLoading(false);
+        })();
+    };
+    const handleClose = () => {
+        setOpen(false);
+        setGpus([])
+    }
+
     return (
         <motion.div initial={{opacity: 0}} whileInView={{opacity: 1}}>
         <Container style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '65vh'}}>
@@ -74,6 +52,11 @@ const Gpu = () => {
                         <img src="/images/video-card.png" alt="Component" style={{width: 100, height: 100}}/>
                     </Box>
                     <Autocomplete
+                        open={open}
+                        loading={loading}
+                        onOpen={handleOpen}
+                        onClose={handleClose}
+                        isOptionEqualToValue={(option, value) => option.name === value.name}
                         value={gpu}
                         onChange={(error, value) => {
                             setGpu(value)
@@ -81,14 +64,26 @@ const Gpu = () => {
                         }}
                         options={gpus}
                         getOptionLabel={(option) => `${option.name}  ${option.chipset ? option.chipset : ""}`}
-                        renderInput={(params) => <TextField {...params} label="GPU" variant="outlined" fullWidth
-                                                              mb={2} mt={2}/>}
-                        ListboxComponent={ListboxComponent}
-                        renderOption={(props, option, state, ownerState) => (
-                            <Box component="li" {...props} sx={{my: 0, p: 5}}>
-                                {option.name} {option.chipset ? option.chipset : 'Unknown Chipset'}
-                            </Box>
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="GPU"
+                                variant="outlined"
+                                fullWidth
+                                mb={2}
+                                mt={2}
+                                InputProps={{
+                                    ...params.InputProps,
+                                    endAdornment: (
+                                        <>
+                                            {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                            {params.InputProps.endAdornment}
+                                        </>
+                                    ),
+                                }}
+                            />
                         )}
+                        ListboxComponent={ListboxComponent}
                     />
                 </CardContent>
             </Card>
