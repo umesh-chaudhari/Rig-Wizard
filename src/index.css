@@ -1,21 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Plaster&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plaster&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-*{
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: Roboto, sans-serif ;
+  font-family: Roboto, sans-serif;
 }
-html{
+html {
   overflow: scroll;
   overflow-x: hidden;
 }
 ::-webkit-scrollbar {
-  width: 0;  /* Remove scrollbar space */
-  background: transparent;  /* Optional: just make scrollbar invisible */
+  width: 0; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
 }
 .parallax {
   overflow: hidden;
@@ -42,4 +42,3 @@ html{
   display: block;
   margin-right: 30px;
 }
-
