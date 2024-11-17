@@ -11,13 +11,14 @@ import {
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { usePcBuilderStore } from "../context/PcStore.jsx";
-import ListboxComponent from "./ListboxComponent.jsx";
+import { usePcBuilderStore } from "../../context/PcStore.jsx";
+import ListboxComponent from "@/components/common/ListboxComponent.jsx";
 
-const URI = import.meta.env.VITE_API_URI + "/build/cooler";
-const Cooler = () => {
-  const { cooler, setCooler } = usePcBuilderStore();
-  const [coolers, setCoolers] = useState([]);
+const URI = import.meta.env.VITE_API_URI + "/build/gpu";
+const Gpu = () => {
+  // const {gpu, setGpu} = useContext(GPUContext)
+  const { gpu, setGpu } = usePcBuilderStore();
+  const [gpus, setGpus] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -25,14 +26,13 @@ const Cooler = () => {
     try {
       const response = await axios.get(URI);
       if (response.status === 200) {
-        setCoolers(response.data);
-        setLoading(false);
+        setGpus(response.data);
       }
     } catch (error) {
-      console.log(error);
-      setLoading(false);
+      //handle error
     }
   };
+
   const handleOpen = () => {
     setOpen(true);
     (async () => {
@@ -43,8 +43,9 @@ const Cooler = () => {
   };
   const handleClose = () => {
     setOpen(false);
-    setCoolers([]);
+    setGpus([]);
   };
+
   return (
     <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>
       <Container
@@ -58,7 +59,7 @@ const Cooler = () => {
         <Card style={{ width: 500, textAlign: "center", padding: "20px" }}>
           <CardContent>
             <Typography variant="h5" gutterBottom>
-              Select Your CPU Cooler
+              Select Your Graphics Card
             </Typography>
             <Box
               display="flex"
@@ -68,7 +69,7 @@ const Cooler = () => {
               mt={3}
             >
               <img
-                src="/images/cooler-caticon.png"
+                src="/images/video-card.png"
                 alt="Component"
                 style={{ width: 100, height: 100 }}
               />
@@ -78,19 +79,21 @@ const Cooler = () => {
               loading={loading}
               onOpen={handleOpen}
               onClose={handleClose}
-              value={cooler}
+              isOptionEqualToValue={(option, value) =>
+                option.name === value.name
+              }
+              value={gpu}
               onChange={(error, value) => {
-                setCooler(value);
-                console.log("Autocomplete Value...", value);
+                setGpu(value);
               }}
-              options={coolers}
+              options={gpus}
               getOptionLabel={(option) =>
-                `${option.name} - ${option.size + " mm"}`
+                `${option.name}  ${option.chipset ? option.chipset : ""}`
               }
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Cooler"
+                  label="GPU"
                   variant="outlined"
                   fullWidth
                   mb={2}
@@ -117,4 +120,4 @@ const Cooler = () => {
   );
 };
 
-export default Cooler;
+export default Gpu;

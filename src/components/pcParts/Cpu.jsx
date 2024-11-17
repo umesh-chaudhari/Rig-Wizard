@@ -11,15 +11,13 @@ import {
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { usePcBuilderStore } from "../context/PcStore.jsx";
-import ListboxComponent from "./ListboxComponent.jsx";
+import { usePcBuilderStore } from "../../context/PcStore.jsx";
+import ListboxComponent from "@/components/common/ListboxComponent.jsx";
 
-const URI = import.meta.env.VITE_API_URI + "/build/storage";
-
-const InternalStorage = () => {
-  // const {storage, setStorage} = useContext(StorageContext)
-  const { storage, setStorage } = usePcBuilderStore();
-  const [storages, setStorages] = useState([]);
+const URI = import.meta.env.VITE_API_URI + "/build/cpu";
+const Cpu = () => {
+  const { cpu, setCpu } = usePcBuilderStore();
+  const [cpus, setCpus] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -27,13 +25,11 @@ const InternalStorage = () => {
     try {
       const response = await axios.get(URI);
       if (response.status === 200) {
-        setStorages(response.data);
+        setCpus(response.data);
       }
     } catch (error) {
-      console.log(error);
     }
   };
-
   const handleOpen = () => {
     setOpen(true);
     (async () => {
@@ -44,7 +40,7 @@ const InternalStorage = () => {
   };
   const handleClose = () => {
     setOpen(false);
-    setStorages([]);
+    setCpus([]);
   };
   return (
     <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>
@@ -59,7 +55,7 @@ const InternalStorage = () => {
         <Card style={{ width: 500, textAlign: "center", padding: "20px" }}>
           <CardContent>
             <Typography variant="h5" gutterBottom>
-              Select Your Internal Storage
+              Select Your CPU
             </Typography>
             <Box
               display="flex"
@@ -69,35 +65,38 @@ const InternalStorage = () => {
               mt={3}
             >
               <img
-                src="/images/hdd.png"
+                src="/images/processor.png"
                 alt="Component"
                 style={{ width: 100, height: 100 }}
               />
             </Box>
             <Autocomplete
               open={open}
+              isOptionEqualToValue={(option, value) =>
+                option.name === value.name
+              }
+              value={cpu}
               loading={loading}
               onOpen={handleOpen}
               onClose={handleClose}
-              value={storage}
               onChange={(error, value) => {
-                setStorage(value);
-                console.log("Autocomplete Value....", value);
+                setCpu(value);
               }}
-              options={storages}
+              options={cpus}
               getOptionLabel={(option) =>
-                `${option.name} - ${option.capacity < 1000 ? option.capacity + " GB" : option.capacity / 1000 + " TB"}`
+                `${option.name} ${option.chipset ? option.chipset : ""}`
               }
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Storage"
+                  label="CPU"
                   variant="outlined"
                   fullWidth
                   mb={2}
                   mt={2}
                   InputProps={{
                     ...params.InputProps,
+                    // Show CircularProgress when loading is true
                     endAdornment: (
                       <>
                         {loading ? (
@@ -118,4 +117,4 @@ const InternalStorage = () => {
   );
 };
 
-export default InternalStorage;
+export default Cpu;

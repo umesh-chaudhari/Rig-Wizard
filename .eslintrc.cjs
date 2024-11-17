@@ -14,6 +14,7 @@ module.exports = {
   rules: {
     "react/prop-types": "off",
     "react/jsx-no-target-blank": "off",
+    "no-console": "error",
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },

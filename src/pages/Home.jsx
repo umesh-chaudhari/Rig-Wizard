@@ -2,7 +2,7 @@ import { ArrowRightAlt } from "@mui/icons-material";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import Footer from "./Footer.jsx";
+import Footer from "../components/common/Footer.jsx";
 import GetStartedToday from "./GetStartedToday.jsx";
 import HowItWorks from "./HowItWorks.jsx";
 

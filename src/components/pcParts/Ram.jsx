@@ -11,15 +11,15 @@ import {
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { usePcBuilderStore } from "../context/PcStore.jsx";
-import ListboxComponent from "./ListboxComponent.jsx";
+import { usePcBuilderStore } from "../../context/PcStore.jsx";
+import ListboxComponent from "@/components/common/ListboxComponent.jsx";
 
-const URI = import.meta.env.VITE_API_URI + "/build/power-supply";
+const URI = import.meta.env.VITE_API_URI + "/build/memory";
 
-const PowerSupply = () => {
-  // const {powerSupply, setPowerSupply} = useContext(PowerSupplyContext)
-  const { powerSupply, setPowerSupply } = usePcBuilderStore();
-  const [powerSupplies, setPowerSupplies] = useState([]);
+const Ram = () => {
+  const { ram, setRam } = usePcBuilderStore();
+  const [rams, setRams] = useState([]);
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -27,7 +27,7 @@ const PowerSupply = () => {
     try {
       const response = await axios.get(URI);
       if (response.status === 200) {
-        setPowerSupplies(response.data);
+        setRams(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -44,7 +44,7 @@ const PowerSupply = () => {
   };
   const handleClose = () => {
     setOpen(false);
-    setPowerSupplies([]);
+    setRams([]);
   };
   return (
     <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>
@@ -59,7 +59,7 @@ const PowerSupply = () => {
         <Card style={{ width: 500, textAlign: "center", padding: "20px" }}>
           <CardContent>
             <Typography variant="h5" gutterBottom>
-              Select Your Power Supply
+              Select Your RAM
             </Typography>
             <Box
               display="flex"
@@ -69,7 +69,7 @@ const PowerSupply = () => {
               mt={3}
             >
               <img
-                src="/images/power-supply.png"
+                src="/images/memory-slot.png"
                 alt="Component"
                 style={{ width: 100, height: 100 }}
               />
@@ -79,19 +79,16 @@ const PowerSupply = () => {
               loading={loading}
               onOpen={handleOpen}
               onClose={handleClose}
-              value={powerSupply}
+              value={ram}
               onChange={(error, value) => {
-                setPowerSupply(value);
-                console.log("Autocomplete Value...", value);
+                setRam(value);
               }}
-              options={powerSupplies}
-              getOptionLabel={(option) =>
-                `${option.name} - ${option.wattage + " W"}`
-              }
+              options={rams}
+              getOptionLabel={(option) => option.name}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Power Supply"
+                  label="RAM"
                   variant="outlined"
                   fullWidth
                   mb={2}
@@ -118,4 +115,4 @@ const PowerSupply = () => {
   );
 };
 
-export default PowerSupply;
+export default Ram;

@@ -11,15 +11,15 @@ import {
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { usePcBuilderStore } from "../context/PcStore.jsx";
-import ListboxComponent from "./ListboxComponent.jsx";
+import { usePcBuilderStore } from "../../context/PcStore.jsx";
+import ListboxComponent from "@/components/common/ListboxComponent.jsx";
 
-const URI = import.meta.env.VITE_API_URI + "/build/memory";
+const URI = import.meta.env.VITE_API_URI + "/build/case";
 
-const Ram = () => {
-  const { ram, setRam } = usePcBuilderStore();
-  const [rams, setRams] = useState([]);
-
+const PcCase = () => {
+  // const {pcCase, setPcCase} = useContext(PcCaseContext)
+  const { pcCase, setPcCase } = usePcBuilderStore();
+  const [pcCases, setPcCases] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -27,7 +27,7 @@ const Ram = () => {
     try {
       const response = await axios.get(URI);
       if (response.status === 200) {
-        setRams(response.data);
+        setPcCases(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -44,7 +44,7 @@ const Ram = () => {
   };
   const handleClose = () => {
     setOpen(false);
-    setRams([]);
+    setPcCases([]);
   };
   return (
     <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>
@@ -59,7 +59,7 @@ const Ram = () => {
         <Card style={{ width: 500, textAlign: "center", padding: "20px" }}>
           <CardContent>
             <Typography variant="h5" gutterBottom>
-              Select Your RAM
+              Select Your Cabinet
             </Typography>
             <Box
               display="flex"
@@ -69,7 +69,7 @@ const Ram = () => {
               mt={3}
             >
               <img
-                src="/images/memory-slot.png"
+                src="/images/cabinets-caticon.png"
                 alt="Component"
                 style={{ width: 100, height: 100 }}
               />
@@ -79,17 +79,18 @@ const Ram = () => {
               loading={loading}
               onOpen={handleOpen}
               onClose={handleClose}
-              value={ram}
+              value={pcCase}
               onChange={(error, value) => {
-                setRam(value);
-                console.log("Autocomplete Value....", value);
+                setPcCase(value);
               }}
-              options={rams}
-              getOptionLabel={(option) => option.name}
+              options={pcCases}
+              getOptionLabel={(option) =>
+                `${option.name} - ${option.type ? option.type : ""}`
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="RAM"
+                  label="Cabinet"
                   variant="outlined"
                   fullWidth
                   mb={2}
@@ -116,4 +117,4 @@ const Ram = () => {
   );
 };
 
-export default Ram;
+export default PcCase;

@@ -11,13 +11,12 @@ import {
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { usePcBuilderStore } from "../context/PcStore.jsx";
-import ListboxComponent from "./ListboxComponent.jsx";
+import { usePcBuilderStore } from "../../context/PcStore.jsx";
+import ListboxComponent from "@/components/common/ListboxComponent.jsx";
 
 const URI = import.meta.env.VITE_API_URI + "/build/motherboard";
 
 const Motherboard = () => {
-  // const {motherboard, setMotherboard} = useContext(MotherboardContext)
   const { motherboard, setMotherboard } = usePcBuilderStore();
   const [motherboards, setMotherboards] = useState([]);
   const [open, setOpen] = useState(false);
@@ -82,7 +81,6 @@ const Motherboard = () => {
               value={motherboard}
               onChange={(error, value) => {
                 setMotherboard(value);
-                console.log("Autocomplete Value....", value);
               }}
               options={motherboards}
               getOptionLabel={(option) =>

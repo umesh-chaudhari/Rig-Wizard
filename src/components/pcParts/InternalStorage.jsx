@@ -11,14 +11,15 @@ import {
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { usePcBuilderStore } from "../context/PcStore.jsx";
-import ListboxComponent from "./ListboxComponent.jsx";
+import { usePcBuilderStore } from "../../context/PcStore.jsx";
+import ListboxComponent from "@/components/common/ListboxComponent.jsx";
 
-const URI = import.meta.env.VITE_API_URI + "/build/gpu";
-const Gpu = () => {
-  // const {gpu, setGpu} = useContext(GPUContext)
-  const { gpu, setGpu } = usePcBuilderStore();
-  const [gpus, setGpus] = useState([]);
+const URI = import.meta.env.VITE_API_URI + "/build/storage";
+
+const InternalStorage = () => {
+  // const {storage, setStorage} = useContext(StorageContext)
+  const { storage, setStorage } = usePcBuilderStore();
+  const [storages, setStorages] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +27,7 @@ const Gpu = () => {
     try {
       const response = await axios.get(URI);
       if (response.status === 200) {
-        setGpus(response.data);
+        setStorages(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -43,9 +44,8 @@ const Gpu = () => {
   };
   const handleClose = () => {
     setOpen(false);
-    setGpus([]);
+    setStorages([]);
   };
-
   return (
     <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>
       <Container
@@ -59,7 +59,7 @@ const Gpu = () => {
         <Card style={{ width: 500, textAlign: "center", padding: "20px" }}>
           <CardContent>
             <Typography variant="h5" gutterBottom>
-              Select Your Graphics Card
+              Select Your Internal Storage
             </Typography>
             <Box
               display="flex"
@@ -69,7 +69,7 @@ const Gpu = () => {
               mt={3}
             >
               <img
-                src="/images/video-card.png"
+                src="/images/hdd.png"
                 alt="Component"
                 style={{ width: 100, height: 100 }}
               />
@@ -79,22 +79,18 @@ const Gpu = () => {
               loading={loading}
               onOpen={handleOpen}
               onClose={handleClose}
-              isOptionEqualToValue={(option, value) =>
-                option.name === value.name
-              }
-              value={gpu}
+              value={storage}
               onChange={(error, value) => {
-                setGpu(value);
-                console.log("Autocomplete Value...", value);
+                setStorage(value);
               }}
-              options={gpus}
+              options={storages}
               getOptionLabel={(option) =>
-                `${option.name}  ${option.chipset ? option.chipset : ""}`
+                `${option.name} - ${option.capacity < 1000 ? option.capacity + " GB" : option.capacity / 1000 + " TB"}`
               }
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="GPU"
+                  label="Storage"
                   variant="outlined"
                   fullWidth
                   mb={2}
@@ -121,4 +117,4 @@ const Gpu = () => {
   );
 };
 
-export default Gpu;
+export default InternalStorage;

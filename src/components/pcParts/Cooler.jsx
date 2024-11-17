@@ -11,13 +11,13 @@ import {
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { usePcBuilderStore } from "../context/PcStore.jsx";
-import ListboxComponent from "./ListboxComponent.jsx";
+import { usePcBuilderStore } from "../../context/PcStore.jsx";
+import ListboxComponent from "@/components/common/ListboxComponent.jsx";
 
-const URI = import.meta.env.VITE_API_URI + "/build/cpu";
-const Cpu = () => {
-  const { cpu, setCpu } = usePcBuilderStore();
-  const [cpus, setCpus] = useState([]);
+const URI = import.meta.env.VITE_API_URI + "/build/cooler";
+const Cooler = () => {
+  const { cooler, setCooler } = usePcBuilderStore();
+  const [coolers, setCoolers] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -25,10 +25,11 @@ const Cpu = () => {
     try {
       const response = await axios.get(URI);
       if (response.status === 200) {
-        setCpus(response.data);
+        setCoolers(response.data);
+        setLoading(false);
       }
     } catch (error) {
-      console.log(error);
+      setLoading(false);
     }
   };
   const handleOpen = () => {
@@ -41,7 +42,7 @@ const Cpu = () => {
   };
   const handleClose = () => {
     setOpen(false);
-    setCpus([]);
+    setCoolers([]);
   };
   return (
     <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>
@@ -56,7 +57,7 @@ const Cpu = () => {
         <Card style={{ width: 500, textAlign: "center", padding: "20px" }}>
           <CardContent>
             <Typography variant="h5" gutterBottom>
-              Select Your CPU
+              Select Your CPU Cooler
             </Typography>
             <Box
               display="flex"
@@ -66,40 +67,35 @@ const Cpu = () => {
               mt={3}
             >
               <img
-                src="/images/processor.png"
+                src="/images/cooler-caticon.png"
                 alt="Component"
                 style={{ width: 100, height: 100 }}
               />
             </Box>
             <Autocomplete
               open={open}
-              isOptionEqualToValue={(option, value) =>
-                option.name === value.name
-              }
-              value={cpu}
               loading={loading}
               onOpen={handleOpen}
               onClose={handleClose}
+              value={cooler}
               onChange={(error, value) => {
-                setCpu(value);
+                setCooler(value);
                 console.log("Autocomplete Value...", value);
-                console.log("zustand value", cpu);
               }}
-              options={cpus}
+              options={coolers}
               getOptionLabel={(option) =>
-                `${option.name} ${option.chipset ? option.chipset : ""}`
+                `${option.name} - ${option.size + " mm"}`
               }
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="CPU"
+                  label="Cooler"
                   variant="outlined"
                   fullWidth
                   mb={2}
                   mt={2}
                   InputProps={{
                     ...params.InputProps,
-                    // Show CircularProgress when loading is true
                     endAdornment: (
                       <>
                         {loading ? (
@@ -120,4 +116,4 @@ const Cpu = () => {
   );
 };
 
-export default Cpu;
+export default Cooler;
