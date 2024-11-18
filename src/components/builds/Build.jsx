@@ -21,6 +21,7 @@ import Cooler from "../pcParts/Cooler.jsx";
 import Motherboard from "../pcParts/Motherboard.jsx";
 
 import { usePcBuilderStore } from "../../context/PcStore.jsx";
+import Loader from "@/components/common/Loader.jsx";
 
 const steps = [
     "CPU",
@@ -32,18 +33,16 @@ const steps = [
     "Cabinet",
     "Power Supply",
 ];
-let newKey = 0;
 const ContentInStep = ({ stepIndex }) => {
     switch (stepIndex) {
         case 0:
-            return <Cpu key={newKey} />;
+            return <Cpu />;
         case 1:
             return <Motherboard />;
         case 2:
             return <Cooler />;
         case 3:
             return <Gpu />;
-
         case 4:
             return <InternalStorage />;
         case 5:
@@ -60,6 +59,7 @@ const ContentInStep = ({ stepIndex }) => {
 const Build = () => {
     const { resetParts } = usePcBuilderStore();
     const [activeStep, setActiveStep] = useState(0);
+    const [loading, setLoading] = useState(false);
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
@@ -69,13 +69,16 @@ const Build = () => {
     const handleReset = () => {
         resetParts();
         setActiveStep(0);
-        newKey = Math.floor(Math.random() * 100);
     };
     const handleFinish = async () => {
-        navigate("/final-build");
+        setLoading(true);
+        setTimeout(()=> {
+            navigate("/final-build");
+            setLoading(false);
+        }, 1000)
     };
     const navigate = useNavigate();
-    return (
+    return (loading ? <Loader/> :
         <Container>
             <Box my={2}>
                 <Typography variant="h3" align="center" gutterBottom>

@@ -42,7 +42,7 @@ const Navbar = ({ setLoading }) => {
             onKeyDown={toggleDrawer(false)}
         >
             <List>
-                {["Home", "How It Works", "About Us", "Contact", "Get Started"].map(
+                {["Home", "Builds", "About Us", "Contact", "Get Started"].map(
                     (text) => (
                         <ListItemButton key={text}>
                             <ListItemText primary={text} />
@@ -75,14 +75,13 @@ const Navbar = ({ setLoading }) => {
                         </Button>
                     </Link>
                     <Button color="primary" size="large" sx={{ margin: "0 0 0 1 rem" }}>
-                        How It Works
+                        Browse
                     </Button>
-                    <Button color="primary" size="large" sx={{ margin: "0 0 0 1 rem" }}>
-                        About Us
-                    </Button>
-                    <Button color="primary" size="large" sx={{ margin: "0 0 0 1 rem" }}>
-                        Contact
-                    </Button>
+                    <Link to="/builds">
+                        <Button color="primary" size="large" sx={{ margin: "0 0 0 1 rem" }}>
+                            List of Builds
+                        </Button>
+                    </Link>
                     <Button
                         color="primary"
                         size="large"

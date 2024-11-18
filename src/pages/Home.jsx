@@ -5,9 +5,12 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../components/common/Footer.jsx";
 import GetStartedToday from "./GetStartedToday.jsx";
 import HowItWorks from "./HowItWorks.jsx";
+import {useState} from "react";
+import Loader from "@/components/common/Loader.jsx";
 
-const Home = ({ setLoading }) => {
+const Home = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const text = "Dream it.Build it.Optimize it".split(".");
   const handleNavigation = () => {
     setLoading(true);
@@ -16,7 +19,7 @@ const Home = ({ setLoading }) => {
       setLoading(false);
     }, 1000); // Simulate loading time
   };
-  return (
+  return (loading ? <Loader /> :
     <>
       <div className="gradient-background"></div>
       <Box

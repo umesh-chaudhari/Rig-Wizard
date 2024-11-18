@@ -11,25 +11,25 @@ const steps = [
   {
     title: "Choose Your Parts",
     description: "Explore our extensive database of PC components.",
-    icon: "/images/rom.png", // Replace with your actual icon component
+    icon: "/images/rom.png",
     icon2: VerifiedOutlined,
   },
   {
     title: "Check Compatibility",
     description: "Ensure all your selected parts work together seamlessly.",
-    icon: "/images/puzzle.png", // Replace with your actual icon component
+    icon: "/images/puzzle.png",
     icon2: BuildCircleOutlined,
   },
   {
     title: "Optimize Performance",
     description: "Avoid bottlenecks with our performance checker.",
-    icon: "/images/optimization.png", // Replace with your actual icon component
+    icon: "/images/optimization.png",
     icon2: SpeedOutlined,
   },
   {
     title: "Share and Inspire",
     description: "Share your build and get inspired by others.",
-    icon: "/images/creativity.png", // Replace with your actual icon component
+    icon: "/images/creativity.png",
     icon2: ShareOutlined,
   },
 ];

@@ -21,8 +21,8 @@ function App() {
                 <Navbar setLoading={setLoading} />
                 {loading && <Loader />}
                 <Routes>
-                    {routes.map(({path: Path, component: Component}, index) => {
-                        return <Route path={Path} element={<Component/>} key={index} />
+                    {routes.map(({path, component: Component}, index) => {
+                        return <Route path={path} element={<Component/>} key={index} />
                     })}
                 </Routes>
             </ThemeProvider>
